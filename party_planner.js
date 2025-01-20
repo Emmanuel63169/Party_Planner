@@ -36,14 +36,48 @@ function renderParties() {
     const partyList = document.querySelector('#parties')
 
     if (!state.parties.length) {
-        parties.innerHTML = '<li>No Parties...</li>';
+        partyList.innerHTML = '<li>No Parties...</li>';
     }
 
-    const partyCard = state.parties.map((party) => {
+    const partyCards = state.parties.map((party) => {
         const card = document.createElement('li');
         card.innerHTML = `
-        <h2>${party.}'</h2>
-        <img src='${}' alt='${}'
-        `
-    })
+        <h2>${party.name}'</h2>
+        <p>${party.date}</p>
+        <p>${party.time}</p>
+        <p>${party.location}</p>
+        <p>${party.description}</p>
+        `;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.setAttribute('json-id', party.id)
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', async (event) => {
+            await deleteParty(event.target.dataset.id)
+        })
+        card.appendChild(deleteButton)
+        return card;
+    });
+    partyList.replaceChildren(...partyCards)
 }
+
+async function render() {
+    await getParties();
+    renderParties();
+}
+
+const form = document.querySelector('form');
+form.addEventListener('submit', async (events) => {
+    event.preventDefault();
+
+    const party = {
+        name: form.partyName.value,
+        date: form.partyDate.value,
+        time: form.partyTime.value,
+        location: form.partyLocation.value,
+        description: form.partyDescription.value,
+    }
+
+    await addParty(party);
+    render();
+});
