@@ -9,7 +9,7 @@ async function getParties() {
     try {
         const response = await fetch(API_URL);
         const json = await response.json();
-        state.artists = json.data
+        state.parties = json.data
     } catch (error) {
         console.log(error)
     }
